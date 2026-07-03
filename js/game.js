@@ -1,0 +1,62 @@
+class Sprite {
+    constructor() { }
+
+    update() { }
+
+    render(ctx) { }
+}
+
+class Game {
+    constructor() {
+        this.canvas = document.getElementById('myCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.sprites = [];
+        this.keys = {};
+        this.mouse = {
+            x: 0,
+            y: 0,
+            clicked: false
+        };
+        this.bindKeyboardEvents();
+        this.bindMouseEvents();
+    }
+
+    addSprite(sprite) {
+        this.sprites.push(sprite);
+    }
+
+    update() {
+        this.sprites.forEach(sprite => sprite.update(this.sprites, this.keys, this.mouse));
+        this.mouse.clicked = false;
+    }
+
+    render() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.sprites.forEach(sprite => sprite.render(this.ctx));
+    }
+
+    loop() {
+        this.update();
+        this.render();
+        requestAnimationFrame(() => this.loop());
+    }
+
+    bindKeyboardEvents() {
+        window.addEventListener('keydown', (e) => {
+            this.keys[e.key] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            this.keys[e.key] = false;
+        });
+    }
+
+    bindMouseEvents() {
+        this.canvas.addEventListener('click', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            this.mouse.x = e.clientX - rect.left;
+            this.mouse.y = e.clientY - rect.top;
+            this.mouse.clicked = true;
+        });
+    }
+}
